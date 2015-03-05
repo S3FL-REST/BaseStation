@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->FullAutonButton, SIGNAL(clicked()), this, SLOT(FullAutonPressed()));
 
     connect(ui->ConnectButton, SIGNAL(clicked()), this, SLOT(ConnectPressed()));
+    connect(ui->DisconnectButton, SIGNAL(clicked()), this, SLOT(DisconnectPressed()));
 
     connect(&joystickTimer, SIGNAL(timeout()), this, SLOT(JoystickUpdate()));
 
@@ -74,6 +75,13 @@ void MainWindow::SemiAutonPressed() {
 
 void MainWindow::FullAutonPressed() {
     networkData.SetRunMode(FULL_AUTON);
+}
+
+void MainWindow::DisconnectPressed() {
+    if (networkTimer.isActive()) {
+        networkTimer.stop();
+        socket.disconnectFromHost();
+    }
 }
 
 void MainWindow::ConnectPressed() {

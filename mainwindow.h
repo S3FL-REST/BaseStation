@@ -49,6 +49,7 @@ private slots:
     void FullAutonPressed();
 
     void ConnectPressed();
+    void DisconnectPressed();
 };
 
 #endif // MAINWINDOW_H
