@@ -3,7 +3,7 @@
 
 
 
-const int JOYSTICK_NUMBER = 2;
+const int JOYSTICK_NUMBER = 1;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
