@@ -1,7 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QCamera>
+#include <QCameraInfo>
 
+#include <QImage>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+
+#include <QVideoWidget>
 
 const int JOYSTICK_NUMBER = 2;
 
@@ -26,9 +33,28 @@ MainWindow::MainWindow(QWidget *parent) :
         joystickTimer.start(10);
     } else {
         qDebug() << "Joystick not connected";
+        QMessageBox::information(this, "Joystick", "No Joystick Connected");
     }
 
     connect(&networkTimer, SIGNAL(timeout()), this, SLOT(NetworkUpdate()));
+
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+
+    if (cameras.size() > 0) {
+        QCamera camera(cameras.at(0));
+
+        QVideoWidget videoWidget;
+        videoWidget.setFixedSize(640, 480);
+
+        camera.setViewfinder(&videoWidget);
+
+        camera.start();
+
+        videoWidget.grab().toImage();
+    } else {
+        QMessageBox::information(this, "Camera", "No Camera Detected");
+        qDebug() << "No Camera Detected";
+    }
 }
 
 void MainWindow::JoystickUpdate() {
@@ -89,7 +115,7 @@ void MainWindow::ConnectPressed() {
         socket.connectToHost(ui->IPAddress->text(), 3141);
 
         if (!socket.waitForConnected()) {
-            QMessageBox::information(this, "Connection", "Unable to Connnect");
+            QMessageBox::information(this, "Connection", "Unable to Connnect to " + ui->IPAddress->text());
         } else {
             networkTimer.start(100);
         }
