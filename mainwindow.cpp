@@ -85,6 +85,12 @@ void MainWindow::DisconnectPressed() {
 
 void MainWindow::ConnectPressed() {
     if (!networkTimer.isActive()) {
+        networkData.SetLeftJoystick(0);
+        networkData.SetRightJoystick(0);
+
+        if (networkData.GetRunMode() != FULL_AUTON)
+            networkData.SetRunMode(STOP);
+
         socket.connectToHost(ui->IPAddress->text(), 3141);
 
         if (!socket.waitForConnected()) {
