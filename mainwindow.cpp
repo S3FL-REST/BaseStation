@@ -1,15 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QCamera>
-#include <QCameraInfo>
-
-#include <QImage>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-
-#include <QVideoWidget>
-
 const int JOYSTICK_NUMBER = 1;
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -37,24 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     connect(&networkTimer, SIGNAL(timeout()), this, SLOT(NetworkUpdate()));
-
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-
-    if (cameras.size() > 0) {
-        QCamera camera(cameras.at(0));
-
-        QVideoWidget videoWidget;
-        videoWidget.setFixedSize(640, 480);
-
-        camera.setViewfinder(&videoWidget);
-
-        camera.start();
-
-        videoWidget.grab().toImage();
-    } else {
-        QMessageBox::information(this, "Camera", "No Camera Detected");
-        qDebug() << "No Camera Detected";
-    }
 }
 
 void MainWindow::JoystickUpdate() {
@@ -66,8 +39,8 @@ void MainWindow::JoystickUpdate() {
         if (event.isInitialState()) continue;
 
         if (event.isAxis()) {
-            if (event.number == 0) left = event.value / limit;
-            else if (event.number == 1) right = event.value / limit;
+            if (event.number == 0) left = floor(10 * event.value / limit) / 10.0;
+            else if (event.number == 1) right = floor(10 * event.value / limit) / 10.0;
         }
     }
 }

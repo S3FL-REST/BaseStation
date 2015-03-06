@@ -11,6 +11,7 @@
 #include <QMessageBox>
 
 #include <climits>
+#include <cmath>
 
 #include <QDebug>
 
@@ -50,8 +51,6 @@ private slots:
 
     void ConnectPressed();
     void DisconnectPressed();
-
-    void ImageCaptured(int, QImage &);
 };
 
 #endif // MAINWINDOW_H
