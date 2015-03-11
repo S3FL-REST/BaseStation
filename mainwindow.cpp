@@ -115,7 +115,7 @@ void MainWindow::DataReady() {
     QImage image;
     image.load(&buffer, "JPG");
 
-    image.save("/home/rest/Desktop/test2.jpg", "JPG");
+    //image.save("/home/rest/Desktop/test2.jpg", "JPG");
 }
 
 MainWindow::~MainWindow() {
