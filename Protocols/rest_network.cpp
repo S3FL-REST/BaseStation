@@ -16,19 +16,19 @@ void rest_network::SetRunMode(run_mode newMode) {
     current_mode = newMode;
 }
 
-int rest_network::GetLeftJoystick() {
+int rest_network::GetLeftJoystick() const {
     return left_joystick;
 }
 
-int rest_network::GetRightJoystick() {
+int rest_network::GetRightJoystick() const {
     return right_joystick;
 }
 
-run_mode rest_network::GetRunMode() {
+run_mode rest_network::GetRunMode() const {
     return current_mode;
 }
 
-QByteArray rest_network::ToByteArray() {
+QByteArray rest_network::ToByteArray() const {
     return QString("%1:%2:%3\n").arg(QString::number(left_joystick), QString::number(right_joystick), QString::number(static_cast<int>(current_mode))).toUtf8();
     //return QString.sprintf("%d:%d:%d\n", left_joystick, right_joystick, static_cast<int>(current_mode));
 }
@@ -44,3 +44,43 @@ bool rest_network::ParseString(QString data) {
 
     return true;
 }
+
+rest_network_pic::rest_network_pic() : new_picture(false) {
+
+}
+
+void rest_network_pic::SetImage(QImage &image_in) {
+    image = image_in;
+}
+
+QImage rest_network_pic::GetImage() const {
+    return image;
+}
+
+bool rest_network_pic::HasNewImage() const {
+    return new_picture;
+}
+
+QByteArray rest_network_pic::ToByteArray() const {
+    QByteArray byteArray;
+
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::WriteOnly);
+
+    image.save(&buffer, "JPG");
+
+    byteArray.push_back('\n');
+
+    return byteArray;
+}
+
+bool rest_network_pic::ParseString(QString data) {
+    QByteArray byteArray = data.toUtf8();
+
+    QBuffer buffer(&byteArray);
+    buffer.open(QIODevice::ReadOnly);
+
+    return new_picture = image.load(&buffer, "JPG");
+}
+
+

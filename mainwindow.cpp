@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-const int JOYSTICK_NUMBER = 1;
+const int JOYSTICK_NUMBER = 0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -39,8 +39,11 @@ void MainWindow::JoystickUpdate() {
         if (event.isInitialState()) continue;
 
         if (event.isAxis()) {
-            if (event.number == 0) left = floor(10 * event.value / limit) / 10.0;
-            else if (event.number == 1) right = floor(10 * event.value / limit) / 10.0;
+            if (event.number == 4) right = (floor(10 * event.value / limit) / 10.0);
+            else if (event.number == 1) left = (floor(10 * event.value / limit) / 10.0);
+
+            if (abs(right * 255.0) < 30) right = 0;
+            if (abs(left * 255.0) < 30) left = 0;
         }
     }
 }
