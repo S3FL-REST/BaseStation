@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&joystickTimer, SIGNAL(timeout()), this, SLOT(JoystickUpdate()));
 
+    connect(&socket, SIGNAL(readyRead()), this, SLOT(DataReady()));
+
     if (js.isFound()) {
         joystickTimer.start(10);
     } else {
@@ -102,6 +104,18 @@ void MainWindow::ConnectPressed() {
             networkTimer.start(100);
         }
     }
+}
+
+void MainWindow::DataReady() {
+    QByteArray data = socket.readAll();
+
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::ReadOnly);
+
+    QImage image;
+    image.load(&buffer, "JPG");
+
+    image.save("/home/rest/Desktop/test2.jpg", "JPG");
 }
 
 MainWindow::~MainWindow() {

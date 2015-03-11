@@ -10,6 +10,9 @@
 #include <QTimer>
 #include <QMessageBox>
 
+#include <QByteArray>
+#include <QBuffer>
+
 #include <climits>
 #include <cmath>
 
@@ -51,6 +54,8 @@ private slots:
 
     void ConnectPressed();
     void DisconnectPressed();
+
+    void DataReady();
 };
 
 #endif // MAINWINDOW_H
