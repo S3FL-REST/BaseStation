@@ -115,7 +115,7 @@ void MainWindow::DataReady() {
     QImage image;
     image.load(&buffer, "JPG");
 
-    //image.save("/home/rest/Desktop/test2.jpg", "JPG");
+    ui->imageViewLabel->setPixmap(QPixmap::fromImage(image));
 }
 
 MainWindow::~MainWindow() {

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>300</height>
+    <width>415</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -105,7 +105,7 @@
      <string>Disconnect</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="ipLabel">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -118,13 +118,38 @@
      <string>IP:</string>
     </property>
    </widget>
+   <widget class="QLabel" name="imageViewLabel">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>60</y>
+      <width>320</width>
+      <height>240</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>ArrowCursor</cursorShape>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string>Picture from Camera</string>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>418</width>
+     <width>415</width>
      <height>25</height>
     </rect>
    </property>
