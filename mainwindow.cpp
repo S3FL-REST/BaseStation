@@ -85,6 +85,8 @@ void MainWindow::DisconnectPressed() {
     if (networkTimer.isActive()) {
         networkTimer.stop();
         socket.disconnectFromHost();
+
+        ui->imageViewLabel->clear();
     }
 }
 
