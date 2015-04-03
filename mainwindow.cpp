@@ -66,19 +66,19 @@ void MainWindow::NetworkUpdate() {
 //Button Code
 
 void MainWindow::StopPressed() {
-    networkData.SetRunMode(STOP);
+    networkData.SetRunMode(Network2Rover::STOP);
 }
 
 void MainWindow::TeleopPressed() {
-    networkData.SetRunMode(TELEOP);
+    networkData.SetRunMode(Network2Rover::TELEOP);
 }
 
 void MainWindow::SemiAutonPressed() {
-    networkData.SetRunMode(SAFE_AUTON);
+    networkData.SetRunMode(Network2Rover::SAFE_AUTON);
 }
 
 void MainWindow::FullAutonPressed() {
-    networkData.SetRunMode(FULL_AUTON);
+    networkData.SetRunMode(Network2Rover::FULL_AUTON);
 }
 
 void MainWindow::DisconnectPressed() {
@@ -95,8 +95,8 @@ void MainWindow::ConnectPressed() {
         networkData.SetLeftJoystick(0);
         networkData.SetRightJoystick(0);
 
-        if (networkData.GetRunMode() != FULL_AUTON)
-            networkData.SetRunMode(STOP);
+        if (networkData.GetRunMode() != Network2Rover::FULL_AUTON)
+            networkData.SetRunMode(Network2Rover::STOP);
 
         socket.connectToHost(ui->IPAddress->text(), 3141);
 

@@ -1,67 +1,103 @@
 #include "rest_network.h"
 
-rest_network::rest_network() : left_joystick(0), right_joystick(0), current_mode(STOP) {
+////////////////////////////////////////////////////////////////////////////////
+/// Network2Rover
+////////////////////////////////////////////////////////////////////////////////
+
+Network2Rover::Network2Rover() : left_joystick(0), right_joystick(0), current_mode(STOP),
+                                 bin_actuator(L_STOP), scoop_actuator(L_STOP), rate(0) {
     //Empty Constructor
 }
 
-void rest_network::SetLeftJoystick(int lJoy) {
+void Network2Rover::SetLeftJoystick(int lJoy) {
     left_joystick = lJoy;
 }
 
-void rest_network::SetRightJoystick(int rJoy) {
+void Network2Rover::SetRightJoystick(int rJoy) {
     right_joystick = rJoy;
 }
 
-void rest_network::SetRunMode(run_mode newMode) {
+void Network2Rover::SetRunMode(run_mode newMode) {
     current_mode = newMode;
 }
 
-int rest_network::GetLeftJoystick() const {
+void Network2Rover::SetBinActuator(linear_actuator l) {
+    bin_actuator = l;
+}
+
+void Network2Rover::SetScoopActuator(linear_actuator l) {
+    scoop_actuator = l;
+}
+
+void Network2Rover::SetArmRate(int r) {
+    rate = r;
+}
+
+int Network2Rover::GetLeftJoystick() const {
     return left_joystick;
 }
 
-int rest_network::GetRightJoystick() const {
+int Network2Rover::GetRightJoystick() const {
     return right_joystick;
 }
 
-run_mode rest_network::GetRunMode() const {
+Network2Rover::run_mode Network2Rover::GetRunMode() const {
     return current_mode;
 }
 
-QByteArray rest_network::ToByteArray() const {
-    return QString("%1:%2:%3\n").arg(QString::number(left_joystick), QString::number(right_joystick), QString::number(static_cast<int>(current_mode))).toUtf8();
-    //return QString.sprintf("%d:%d:%d\n", left_joystick, right_joystick, static_cast<int>(current_mode));
+Network2Rover::linear_actuator Network2Rover::GetBinActuator() const {
+    return bin_actuator;
 }
 
-bool rest_network::ParseString(QString data) {
-    QStringList list = data.split(":");
+Network2Rover::linear_actuator Network2Rover::GetScoopActuator() const {
+    return scoop_actuator;
+}
 
-    if (list.size() < 3) return false;
+int Network2Rover::GetArmRate() const {
+    return rate;
+}
+
+QByteArray Network2Rover::ToByteArray() const {
+    return QString("%1:%2:%3\n").arg(QString::number(left_joystick),
+                                     QString::number(right_joystick),
+                                     QString::number(static_cast<int>(current_mode)),
+                                     QString::number(static_cast<int>(bin_actuator)),
+                                     QString::number(static_cast<int>(scoop_actuator)),
+                                     QString::number(rate)).toUtf8();
+}
+
+bool Network2Rover::ParseData(QByteArray &data) {
+    QStringList list = QString(data).split(":");
+
+    if (list.size() < NUM_PARAMS) return false;
 
     left_joystick = list.at(0).toInt();
     right_joystick = list.at(1).toInt();
     current_mode = static_cast<run_mode>(list.at(2).toInt());
+    bin_actuator = static_cast<Network2Rover::linear_actuator>(list.at(3).toInt());
+    scoop_actuator = static_cast<Network2Rover::linear_actuator>(list.at(4).toInt());
+    rate = list.at(5).toInt();
 
     return true;
 }
 
-rest_network_pic::rest_network_pic() : new_picture(false) {
+////////////////////////////////////////////////////////////////////////////////
+/// Network2Base
+////////////////////////////////////////////////////////////////////////////////
+
+Network2Base::Network2Base() {
 
 }
 
-void rest_network_pic::SetImage(QImage &image_in) {
+void Network2Base::SetImage(QImage &image_in) {
     image = image_in;
 }
 
-QImage rest_network_pic::GetImage() const {
+QImage Network2Base::GetImage() const {
     return image;
 }
 
-bool rest_network_pic::HasNewImage() const {
-    return new_picture;
-}
-
-QByteArray rest_network_pic::ToByteArray() const {
+QByteArray Network2Base::ToByteArray() const {
     QByteArray byteArray;
 
     QBuffer buffer(&byteArray);
@@ -74,13 +110,11 @@ QByteArray rest_network_pic::ToByteArray() const {
     return byteArray;
 }
 
-bool rest_network_pic::ParseString(QString data) {
-    QByteArray byteArray = data.toUtf8();
-
-    QBuffer buffer(&byteArray);
+bool Network2Base::ParseData(QByteArray &data) {
+    QBuffer buffer(&data);
     buffer.open(QIODevice::ReadOnly);
 
-    return new_picture = image.load(&buffer, "JPG");
+    return image.load(&buffer, "JPG");
 }
 
 

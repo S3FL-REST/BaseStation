@@ -37,7 +37,7 @@ private:
     double left;
     double right;
 
-    rest_network networkData;
+    Network2Rover networkData;
 
     QTcpSocket socket;
     QTimer joystickTimer;
