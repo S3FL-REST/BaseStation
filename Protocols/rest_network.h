@@ -28,7 +28,7 @@ public:
 
     Network2Rover();
 
-    static const int NUM_PARAMS = 6;
+    static const int NUM_PARAMS = 7;
 
     void SetLeftJoystick(int);
     void SetRightJoystick(int);
@@ -36,6 +36,7 @@ public:
     void SetBinActuator(linear_actuator);
     void SetScoopActuator(linear_actuator);
     void SetArmRate(int);
+    void SetSuspension(linear_actuator);
 
     int GetLeftJoystick() const;
     int GetRightJoystick() const;
@@ -43,6 +44,7 @@ public:
     linear_actuator GetBinActuator() const;
     linear_actuator GetScoopActuator() const;
     int GetArmRate() const;
+    linear_actuator GetSuspension() const;
 
     QByteArray ToByteArray() const;
     bool ParseData(QByteArray&);
@@ -54,6 +56,7 @@ private:
     linear_actuator bin_actuator;
     linear_actuator scoop_actuator;
     int rate;
+    linear_actuator suspension_actuator;
 };
 
 class Network2Base
