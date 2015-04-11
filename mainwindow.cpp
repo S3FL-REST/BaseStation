@@ -6,7 +6,8 @@ const int JOYSTICK_NUMBER = 0;
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    js(JOYSTICK_NUMBER), left(0.0), right(0.0)
+    js(JOYSTICK_NUMBER), left(0.0), right(0.0),
+    binActuator(Network2Rover::L_STOP), scoopActuator(Network2Rover::L_STOP), suspensionActuator(Network2Rover::L_STOP)
 {
     ui->setupUi(this);
 
@@ -44,8 +45,30 @@ void MainWindow::JoystickUpdate() {
             if (event.number == 4) right = (floor(10 * event.value / limit) / 10.0);
             else if (event.number == 1) left = (floor(10 * event.value / limit) / 10.0);
 
+            //Arm Rate -> Event number and rates need updating and validating
+            else if (event.number == 3) armRate = 100 * event.value / limit;
+
             if (abs(right * 255.0) < 30) right = 0;
             if (abs(left * 255.0) < 30) left = 0;
+        } if (event.isButton()) {
+
+            //Bin Actuator -> Event numbers need changing
+            if (event.number == 1)
+                binActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_FORWARD;
+            else if (event.number == 2)
+                binActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
+
+            //Scoop Actuator -> Event numbers need changing
+            if (event.number == 3)
+                scoopActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_FORWARD;
+            else if (event.number == 4)
+                scoopActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
+
+            //Suspension Actuator -> Event numbers need changing
+            if (event.number == 5 && event.value)
+                suspensionActuator = Network2Rover::L_FORWARD;
+            else if (event.number == 6 && event.value)
+                suspensionActuator = Network2Rover::L_REVERSE;
         }
     }
 }
@@ -53,6 +76,10 @@ void MainWindow::JoystickUpdate() {
 void MainWindow::NetworkUpdate() {
     networkData.SetLeftJoystick(static_cast<int>(left * 255));
     networkData.SetRightJoystick(static_cast<int>(right * 255));
+    networkData.SetBinActuator(binActuator);
+    networkData.SetScoopActuator(scoopActuator);
+    networkData.SetSuspension(suspensionActuator);
+    networkData.SetArmRate(armRate);
 
     if (socket.state() != QAbstractSocket::ConnectedState) {
         qDebug() << "Socket Not Connected";

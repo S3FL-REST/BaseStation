@@ -36,6 +36,10 @@ private:
     Joystick js;
     double left;
     double right;
+    Network2Rover::linear_actuator binActuator;
+    Network2Rover::linear_actuator scoopActuator;
+    Network2Rover::linear_actuator suspensionActuator;
+    int armRate;
 
     Network2Rover networkData;
 
