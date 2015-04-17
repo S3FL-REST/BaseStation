@@ -66,7 +66,7 @@ Network2Rover::linear_actuator Network2Rover::GetSuspension() const {
 }
 
 QByteArray Network2Rover::ToByteArray() const {
-    return QString("%1:%2:%3\n").arg(QString::number(left_joystick),
+    return QString("%1:%2:%3:%4:%5:%6:%7\n").arg(QString::number(left_joystick),
                                      QString::number(right_joystick),
                                      QString::number(static_cast<int>(current_mode)),
                                      QString::number(static_cast<int>(bin_actuator)),

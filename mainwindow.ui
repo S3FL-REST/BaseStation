@@ -88,6 +88,9 @@
       <height>27</height>
      </rect>
     </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <property name="text">
      <string>Connect</string>
     </property>
