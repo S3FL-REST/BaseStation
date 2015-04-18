@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     js(JOYSTICK_NUMBER), left(0.0), right(0.0),
-    binActuator(Network2Rover::L_STOP), scoopActuator(Network2Rover::L_STOP), suspensionActuator(Network2Rover::L_STOP)
+    binActuator(Network2Rover::L_STOP), scoopActuator(Network2Rover::L_STOP), suspensionActuator(Network2Rover::L_STOP),
+    armRate(0.0), ar_1(0), ar_2(0)
 {
     ui->setupUi(this);
 
@@ -39,47 +40,63 @@ void MainWindow::JoystickUpdate() {
     JoystickEvent event;
 
     while (js.sample(&event)) {
-        if (event.isInitialState()) continue;
+        //if (event.isInitialState()) continue;
 
         if (event.isAxis()) {
             if (event.number == 4) right = (floor(10 * event.value / limit) / 10.0);
             else if (event.number == 1) left = (floor(10 * event.value / limit) / 10.0);
 
+            if (event.number == 2 || event.number == 5) {
+                if (event.number == 2) ar_1 = event.value;
+                else if (event.number == 5) ar_2 = event.value;
+
+                armRate = (ar_2 - ar_1) / (2 * limit);
+            }
+
             //Arm Rate -> Event number and rates need updating and validating
             else if (event.number == 3) armRate = 100 * event.value / limit;
 
-            if (abs(right * 255.0) < 30) right = 0;
-            if (abs(left * 255.0) < 30) left = 0;
+            const double MOTOR_DEADZONE = 0.12;
+            const double RATE_DEADZONE = 0.1;
+
+            if (abs(right) < MOTOR_DEADZONE) right = 0;
+            if (abs(left) < MOTOR_DEADZONE) left = 0;
+
+            if (abs(armRate) < RATE_DEADZONE) armRate = 0;
         } if (event.isButton()) {
+            if (event.value != 0) qDebug() << "Button Pressed: " << event.number;
 
             //Bin Actuator -> Event numbers need changing
-            if (event.number == 1)
+            if (event.number == 2)
                 binActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_FORWARD;
-            else if (event.number == 2)
+            else if (event.number == 3)
                 binActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
 
             //Scoop Actuator -> Event numbers need changing
-            if (event.number == 3)
+            if (event.number == 1)
                 scoopActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_FORWARD;
-            else if (event.number == 4)
+            else if (event.number == 0)
                 scoopActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
 
             //Suspension Actuator -> Event numbers need changing
-            if (event.number == 5 && event.value)
+            if (event.number == 4 && event.value)
                 suspensionActuator = Network2Rover::L_FORWARD;
-            else if (event.number == 6 && event.value)
+            else if (event.number == 5 && event.value)
                 suspensionActuator = Network2Rover::L_REVERSE;
         }
     }
 }
 
 void MainWindow::NetworkUpdate() {
-    networkData.SetLeftJoystick(static_cast<int>(left * 255));
-    networkData.SetRightJoystick(static_cast<int>(right * 255));
+    const int MOTOR_MODIFIER = 255;
+    const int RATE_MODIFIER = 1000;
+
+    networkData.SetLeftJoystick(static_cast<int>(left * MOTOR_MODIFIER));
+    networkData.SetRightJoystick(static_cast<int>(right * MOTOR_MODIFIER));
     networkData.SetBinActuator(binActuator);
     networkData.SetScoopActuator(scoopActuator);
     networkData.SetSuspension(suspensionActuator);
-    networkData.SetArmRate(armRate);
+    networkData.SetArmRate(static_cast<int>(armRate * RATE_MODIFIER));
 
     if (socket.state() != QAbstractSocket::ConnectedState) {
         qDebug() << "Socket Not Connected";

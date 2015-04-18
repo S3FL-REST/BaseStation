@@ -39,7 +39,10 @@ private:
     Network2Rover::linear_actuator binActuator;
     Network2Rover::linear_actuator scoopActuator;
     Network2Rover::linear_actuator suspensionActuator;
-    int armRate;
+
+    double armRate;
+    int ar_1;
+    int ar_2;
 
     Network2Rover networkData;
 
