@@ -8,7 +8,9 @@
 
 #include <QTcpSocket>
 #include <QTimer>
+
 #include <QMessageBox>
+#include <QPalette>
 
 #include <QByteArray>
 #include <QBuffer>
@@ -49,6 +51,9 @@ private:
     QTcpSocket socket;
     QTimer joystickTimer;
     QTimer networkTimer;
+
+    QPalette connectedState;
+    QPalette disconnectedState;
 
 private slots:
     void JoystickUpdate();

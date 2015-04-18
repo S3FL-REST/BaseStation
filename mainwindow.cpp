@@ -8,7 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     js(JOYSTICK_NUMBER), left(0.0), right(0.0),
     binActuator(Network2Rover::L_STOP), scoopActuator(Network2Rover::L_STOP), suspensionActuator(Network2Rover::L_STOP),
+<<<<<<< HEAD
     armRate(0.0), ar_1(0), ar_2(0)
+=======
+    connectedState(QPalette::Background, Qt::green), disconnectedState(QPalette::Background, Qt::red)
+>>>>>>> 29b78995696f1e956763ac8b047273654d370248
 {
     ui->setupUi(this);
 
@@ -100,7 +104,7 @@ void MainWindow::NetworkUpdate() {
 
     if (socket.state() != QAbstractSocket::ConnectedState) {
         qDebug() << "Socket Not Connected";
-        networkTimer.stop();
+        DisconnectPressed();
     }
 
     socket.write(networkData.ToByteArray());
@@ -132,6 +136,8 @@ void MainWindow::DisconnectPressed() {
 
         ui->imageViewLabel->clear();
     }
+
+    ui->ConnectButton->setStyleSheet("background-color:red");
 }
 
 void MainWindow::ConnectPressed() {
@@ -146,8 +152,10 @@ void MainWindow::ConnectPressed() {
 
         if (!socket.waitForConnected()) {
             QMessageBox::information(this, "Connection", "Unable to Connnect to " + ui->IPAddress->text());
+            ui->ConnectButton->setStyleSheet("background-color:red");
         } else {
             networkTimer.start(100);
+            ui->ConnectButton->setStyleSheet("background-color:green");
         }
     }
 }
