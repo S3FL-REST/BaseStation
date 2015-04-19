@@ -8,11 +8,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     js(JOYSTICK_NUMBER), left(0.0), right(0.0),
     binActuator(Network2Rover::L_STOP), scoopActuator(Network2Rover::L_STOP), suspensionActuator(Network2Rover::L_STOP),
-<<<<<<< HEAD
-    armRate(0.0), ar_1(0), ar_2(0)
-=======
+    armRate(0.0), ar_1(0), ar_2(0),
     connectedState(QPalette::Background, Qt::green), disconnectedState(QPalette::Background, Qt::red)
->>>>>>> 29b78995696f1e956763ac8b047273654d370248
 {
     ui->setupUi(this);
 
@@ -83,10 +80,10 @@ void MainWindow::JoystickUpdate() {
                 scoopActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
 
             //Suspension Actuator -> Event numbers need changing
-            if (event.number == 4 && event.value)
-                suspensionActuator = Network2Rover::L_FORWARD;
-            else if (event.number == 5 && event.value)
-                suspensionActuator = Network2Rover::L_REVERSE;
+            if (event.number == 4)
+                suspensionActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_FORWARD;
+            else if (event.number == 5)
+                suspensionActuator = (event.value == 0) ? Network2Rover::L_STOP : Network2Rover::L_REVERSE;
         }
     }
 }
